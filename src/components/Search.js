@@ -10,6 +10,7 @@ const Search = () => {
   const [error, setError] = useState('');
   const [year,setYear] = useState('');
   const [Language,setLanguage] = useState('');
+  const [genre,setgenre] = useState('');
 
   const handleChange = (event) => {
     setQuery(event.target.value);
@@ -26,6 +27,9 @@ const Search = () => {
     setLanguage(e.target.value);
   }
 
+  function handleGenre(e){
+    setgenre(e.target.value);
+  }
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -36,6 +40,7 @@ const Search = () => {
       const data = await res.json();
 
       if (data.length === 0) {
+        setMovies([]);
         setError('No movies found.');
       } else {
         console.log(data);
@@ -45,9 +50,9 @@ const Search = () => {
          const filter_rating = (movieRating>=parseFloat(rating || 0)) === true ? true:false;
          const filter_year = year?(movie.premiered && movie.premiered.split('-')[0]===year):true
          const filter_lang = Language ? (movie.language && movie.language.toLowerCase() === Language.toLowerCase()) : true; 
-       
+         const filter_genre = genre ? (movie.genres && movie.genres.map(g => g.toLowerCase()).includes(genre.toLowerCase())) : true;
 
-         return (filter_rating && filter_year && filter_lang)
+         return (filter_rating && filter_year && filter_lang && filter_genre) 
         });
 
         if (filteredMovies.length === 0) {
@@ -78,9 +83,16 @@ const Search = () => {
           onChange={handleChange}
           className="appearance-none bg-gray-800 border border-white text-gray-200 w-full py-2 px-4 rounded leading-tight focus:outline-none focus:bg-gray-700"
         />
+         <input
+          type="text"
+          placeholder="Genre(Drama,Thriller etc) or Leave blank"
+          value={genre}
+          onChange={handleGenre}
+          className="appearance-none bg-gray-800 border border-white text-gray-200 w-full py-2 px-4 rounded leading-tight focus:outline-none focus:bg-gray-700"
+        />
         <input
           type="number"
-          placeholder="Minimum Rating"
+          placeholder="Minimum Rating(0) or Leave blank"
           value={rating}
           onChange={handleRatingChange}
           className="appearance-none bg-gray-800 border border-white text-gray-200 w-full py-2 px-4 rounded leading-tight focus:outline-none focus:bg-gray-700"
@@ -90,14 +102,14 @@ const Search = () => {
         />
         <input
           type="number"
-          placeholder="Year"
+          placeholder="Year or Leave blank"
           value={year}
           onChange={HandleYearChange}
           className="appearance-none bg-gray-800 border border-white text-gray-200 w-full py-2 px-4 rounded leading-tight focus:outline-none focus:bg-gray-700"
         />
         <input
             type="text"
-            placeholder="Language"
+            placeholder="Language(Hindi,English etc) or Leave blank"
             value={Language}
             onChange={HandleLanguage}
             className="appearance-none bg-gray-800 border border-white text-gray-200 w-full py-2 px-4 rounded leading-tight focus:outline-none focus:bg-gray-700"
